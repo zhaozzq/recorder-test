@@ -42,7 +42,7 @@
         <label>播放录音</label> 
         <button type="button" onclick="window.webkit.messageHandlers.play.postMessage('')">Start</button>
         <button type="button" onclick="window.webkit.messageHandlers.stopPlay.postMessage('')">Stop</button>
-        <audio></audio>
+        <audio controls="controls"></audio>
     </div>
 
     <script>
@@ -72,7 +72,9 @@
             console.log(code);
             if (code === '0' && data) {
                 console.log(data);
-                $("audio").html("<source src=\""+data+"\"/>");
+		var base64String = decodeURIComponent(data);
+		var decodedData = window.atob(base64String);
+                document.querySelector("audio").html("<source src=\""+decodedData+"\"/>");
             } 
         }
 
