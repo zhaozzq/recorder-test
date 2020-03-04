@@ -2,47 +2,54 @@
 <html>
 
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-	<title>Input 测试</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Input 测试</title>
 </head>
 
 <style>
-    div{
+    div {
         padding: 12px
     }
-    label{
+
+    label {
         padding-right: 12px
     }
 </style>
 
 <body>
     <div>
-	<label>照相机</label>
-    <input type="file" id='image' accept="image/*" capture='camera'>
+        <label>照相机</label>
+        <input type="file" id='image' accept="image/*" capture='camera'>
     </div>
     <div>
-    <label>摄像机</label>
-    <input type="file" id='video' accept="video/*" capture='camcorder'>
+        <label>摄像机</label>
+        <input type="file" id='video' accept="video/*" capture='camcorder'>
     </div>
     <div>
-    <label>麦克风(不可用)</label> 
-    <!-- 在iOS应用内闪退 -->
-    <input type="file" id='audio' accept="audio/*" capture="microphone">
+        <label>麦克风(不可用)</label>
+        <!-- 在iOS应用内闪退 -->
+        <input type="file" id='audio' accept="audio/*" capture="microphone">
     </div>
-    
+
     <div id='recoder'>
-        <label>录音</label> 
+        <label>录音</label>
         <button type="button" onclick="captureAudio('10', '1')">开始</button>
         <button type="button" onclick="stopCaptureAudio(false)">结束</button>
         <button type="button" onclick="stopCaptureAudio(true)">取消</button>
     </div>
 
     <div id='player'>
-        <label>播放录音</label> 
+        <label>播放录音</label>
         <!-- <button type="button" onclick="window.webkit.messageHandlers.play.postMessage('')">Start</button> -->
         <!-- <button type="button" onclick="window.webkit.messageHandlers.stopPlay.postMessage('')">Stop</button> -->
         <audio controls></audio>
+    </div>
+
+    <div>
+        <label>加载测试页</label>
+        <textarea placeholder="输入测试链接"></textarea>
+        <button type="button" onclick="goNewPage()">Go</button>
     </div>
 
     <script>
@@ -53,8 +60,9 @@
             image.removeAttribute("capture");
             video.removeAttribute("capture");
         }
+
         function getIos() {
-            var ua=navigator.userAgent.toLowerCase();
+            var ua = navigator.userAgent.toLowerCase();
             if (ua.match(/iPhone\sOS/i) == "iphone os") {
                 return true;
             } else {
@@ -62,29 +70,38 @@
             }
         }
 
-        function captureAudio(maxSecond,minSecond) {
-            window.webkit.messageHandlers.captureAudio.postMessage({ "maxSecond": maxSecond, "minSecond": minSecond});
+        function captureAudio(maxSecond, minSecond) {
+            window.webkit.messageHandlers.captureAudio.postMessage({
+                "maxSecond": maxSecond,
+                "minSecond": minSecond
+            });
         }
+
         function stopCaptureAudio(cancel) {
-            window.webkit.messageHandlers.stopCaptureAudio.postMessage(cancel?"1":"0");
+            window.webkit.messageHandlers.stopCaptureAudio.postMessage(cancel ? "1" : "0");
         }
+
         function captureAudioResult(code, data) {
             console.log(code);
             if (code === '0' && data) {
                 console.log(data);
-		var base64String = decodeURIComponent(data);
-		//var decodedData = window.atob(base64String);
-                document.querySelector("audio").setAttribute("src","data:audio/aac;base64,"+base64String);
-            } 
+                var base64String = decodeURIComponent(data);
+                //var decodedData = window.atob(base64String);
+                document.querySelector("audio").setAttribute("src", "data:audio/aac;base64," + base64String);
+            }
         }
 
-        function readFile(file, onLoadCallback){
+        function goNewPage() {
+            window.location.href = document.querySelector("textarea").value;
+        }
+
+        function readFile(file, onLoadCallback) {
             var reader = new FileReader();
             reader.onload = onLoadCallback;
             reader.readAsDataURL(file);
         }
     </script>
-	
+
 </body>
 
 </html>
